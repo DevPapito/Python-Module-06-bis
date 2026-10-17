@@ -1,3 +1,13 @@
-from .strategy import BattleStrategy, NormalStrategy, AggressiveStrategy, InvalidCreatureError
+from .strategy import (
+    AggressiveStrategy,
+    BattleStrategy,
+    InvalidCreatureError,
+    NormalStrategy,
+)
 
-__all__ = ["BattleStrategy", "NormalStrategy", "AggressiveStrategy", "InvalidCreatureError"]
+__all__ = [
+    "BattleStrategy",
+    "NormalStrategy",
+    "AggressiveStrategy",
+    "InvalidCreatureError",
+]

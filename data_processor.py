@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, Dict, List
 
 
 class DataProcessor(ABC):
 
     def __init__(self) -> None:
-        self._storage: list[str] = []
+        self._storage: List[str] = []
         self._total_processed: int = 0
         self._next_output_rank: int = 0
 
@@ -82,7 +82,10 @@ class LogProcessor(DataProcessor):
         def is_valid_dict(d: Any) -> bool:
             if not isinstance(d, dict):
                 return False
-            return all(isinstance(k, str) and isinstance(v, str) for k, v in d.items())
+            return all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in d.items()
+            )
 
         if is_valid_dict(data):
             return True
@@ -96,13 +99,16 @@ class LogProcessor(DataProcessor):
         if not self.validate(data):
             raise ValueError("Improper log data")
 
-        items = data if isinstance(data, list) else [data]
+        items: List[Dict[str, str]] = (
+            data if isinstance(data, list) else [data]
+        )
         for item in items:
             level = item.get("log_level", "UNKNOWN")
             msg = item.get("log_message", "")
             formatted = f"{level}: {msg}" if level else msg
             self._storage.append(formatted)
             self._total_processed += 1
+
 
 def main() -> None:
     print("=== Code Nexus - Data Processor ===")
@@ -113,7 +119,7 @@ def main() -> None:
     print(f"Trying to validate input 'Hello': {num_proc.validate('Hello')}")
 
     try:
-        print("Test invalid ingestion of string 'foo' without prior validation:")
+        print("Test invalid ingestion of string 'foo' without validation:")
         num_proc.ingest("foo")
     except ValueError as e:
         print(f"Got exception: {e}")
@@ -128,7 +134,7 @@ def main() -> None:
     print("Testing Text Processor...")
     txt_proc = TextProcessor()
     print(f"Trying to validate input '42': {txt_proc.validate(42)}")
-    txt_proc.ingest(['Hello', 'Nexus', 'World'])
+    txt_proc.ingest(["Hello", "Nexus", "World"])
     print("Processing data: ['Hello', 'Nexus', 'World']")
     print("Extracting 1 value...")
     rank, val = txt_proc.output()
@@ -138,8 +144,8 @@ def main() -> None:
     log_proc = LogProcessor()
     print(f"Trying to validate input 'Hello': {log_proc.validate('Hello')}")
     logs = [
-        {'log_level': 'NOTICE', 'log_message': 'Connection to server'},
-        {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}
+        {"log_level": "NOTICE", "log_message": "Connection to server"},
+        {"log_level": "ERROR", "log_message": "Unauthorized access!!"},
     ]
     log_proc.ingest(logs)
     print(f"Processing data: {logs}")
@@ -148,5 +154,6 @@ def main() -> None:
         rank, val = log_proc.output()
         print(f"Log entry {rank}: {val}")
 
+
 if __name__ == "__main__":
-     main()
+    main()

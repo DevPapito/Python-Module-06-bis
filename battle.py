@@ -34,5 +34,6 @@ def main() -> None:
     print("Testing battle")
     test_battle(flame_factory, transform_factory)
 
+
 if __name__ == "__main__":
-     main()
+    main()
